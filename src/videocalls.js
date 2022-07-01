@@ -33,6 +33,9 @@ let hangUpCallButton = document.getElementById('hangup-call-button');
 let acceptCallButton = document.getElementById('accept-call-button');
 let startVideoButton = document.getElementById('start-video-button');
 let stopVideoButton = document.getElementById('stop-video-button');
+let muteCallButton = document.getElementById('mute-call-button');
+let unMuteCallButton = document.getElementById('unmute-call-button');
+let contactTeButton = document.getElementById('contact-te-button');
 let remoteVideoContainer = document.getElementById('remoteVideoContainer');
 let localVideoContainer = document.getElementById('localVideoContainer');
 let twitterLoginButton = document.getElementsByClassName('twitterButton')[0];
@@ -70,6 +73,30 @@ async function getUserAcsId(userEmail) {
         console.error('No Acs User Id has been found for this email.');
         return undefined;
     }
+}
+
+async function createIssue(userEmail) {
+fetch('http://localhost:7071/api/MainTrigger?func=createIssue', {
+  method: 'POST',
+  body: JSON.stringify({
+    name:userEmail,
+    id:userEmail,
+    service:"default",
+    category:"",
+    phoneNumber:"",
+    dateTime:new Date(),
+    handled:false
+    }),
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+  }
+  })
+  .then(function(response){ 
+    return response.json()})
+  .then(function(data)
+    {console.log(JSON.stringify(data))
+    })
+  .catch(error => console.error('Error:', error)); 
 }
 
 (async function() {
@@ -308,11 +335,17 @@ subscribeToCall = (call) => {
                 hangUpCallButton.disabled = false;
                 startVideoButton.disabled = false;
                 stopVideoButton.disabled = false;
+                muteCallButton.disabled = false;
+                unMuteCallButton.disabled = true;
+                contactTeButton.disabled = true;
             } else if (call.state === 'Disconnected') {
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
                 stopVideoButton.disabled = true;
+                muteCallButton.disabled = true;
+                unMuteCallButton.disabled = true;
+                contactTeButton.disabled = false;
                 console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
             }   
         });
@@ -442,6 +475,34 @@ startVideoButton.onclick = async () => {
 stopVideoButton.onclick = async () => {
     try {
         await call.stopVideo(localVideoStream);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+muteCallButton.onclick = async () => {
+    try {
+        await call.Mute(localVideoStream);
+        muteCallButton.disabled = true;
+        unMuteCallButton.disabled = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+unMuteCallButton.onclick = async () => {
+    try {
+        await call.Unmute(localVideoStream);
+        unMuteCallButton.disabled = true;
+        muteCallButton.disabled = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+contactTeButton.onclick = async () => {
+    try {
+        contactTeButton.disabled = true;
+        createIssue(document.querySelector('#user_email').textContent);
     } catch (error) {
         console.error(error);
     }
