@@ -360,7 +360,7 @@ subscribeToCall = (call) => {
                 stopVideoButton.disabled = false;
                 muteCallButton.disabled = false;
                 unMuteCallButton.disabled = true;
-                contactTeButton.disabled = true;
+                contactTeButton.disabled = false;
                 teamsCallButton.textBlock.text = "Hang up";
             } else if (call.state === 'Disconnected') {
                 incoming = false;
@@ -534,7 +534,7 @@ unMuteCallButton.onclick = async () => {
 }
 contactTeButton.onclick = async () => {
     try {
-        contactTeButton.disabled = true;
+        contactTeButton.disabled = false;
         createIssue(document.querySelector('#user_email').textContent);
     } catch (error) {
         console.error(error);
