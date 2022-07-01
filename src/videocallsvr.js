@@ -29,6 +29,9 @@ let hangUpCallButton = document.getElementById('hangup-call-button');
 let acceptCallButton = document.getElementById('accept-call-button');
 let startVideoButton = document.getElementById('start-video-button');
 let stopVideoButton = document.getElementById('stop-video-button');
+let muteCallButton = document.getElementById('mute-call-button');
+let unMuteCallButton = document.getElementById('mute-call-button');
+let contactTeButton = document.getElementById('contact-te-button');
 let twitterLoginButton = document.getElementsByClassName('twitterButton')[0];
 let aadLoginButton = document.getElementsByClassName('aadButton')[0];
 let googleLoginButton = document.getElementsByClassName('googleButton')[0];
@@ -85,6 +88,31 @@ async function getUserAcsId(userEmail) {
         return undefined;
     }
 }
+async function createIssue(userEmail) {
+	fetch('http://localhost:7071/api/MainTrigger?func=createIssue', {
+			method: 'POST',
+			body: JSON.stringify({
+				name: userEmail,
+				id: userEmail,
+				service: "default",
+				category: "",
+				phoneNumber: "",
+				dateTime: new Date(),
+				handled: false
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			}
+		})
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(data) {
+			console.log(JSON.stringify(data));
+		})
+		.catch(error => console.error('Error:', error));
+}
+
 
 // Executing code now
 (async function() {
@@ -330,6 +358,9 @@ subscribeToCall = (call) => {
                 hangUpCallButton.disabled = false;
                 startVideoButton.disabled = false;
                 stopVideoButton.disabled = false;
+                muteCallButton.disabled = false;
+                unMuteCallButton.disabled = true;
+                contactTeButton.disabled = true;
                 teamsCallButton.textBlock.text = "Hang up";
             } else if (call.state === 'Disconnected') {
                 incoming = false;
@@ -347,6 +378,9 @@ subscribeToCall = (call) => {
                 hangUpCallButton.disabled = true;
                 startVideoButton.disabled = true;
                 stopVideoButton.disabled = true;
+                muteCallButton.disabled = true;
+                unMuteCallButton.disabled = true;
+                contactTeButton.disabled = false;
                 console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
             }   
         });
@@ -479,6 +513,33 @@ stopVideoButton.onclick = async () => {
     }
 }
 
+muteCallButton.onclick = async () => {
+    try {
+        await call.Mute(localVideoStream);
+        muteCallButton.disabled = true;
+        unMuteCallButton.disabled = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+unMuteCallButton.onclick = async () => {
+    try {
+        await call.Unmute(localVideoStream);
+        unMuteCallButton.disabled = true;
+        muteCallButton.disabled = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+contactTeButton.onclick = async () => {
+    try {
+        contactTeButton.disabled = true;
+        createIssue(document.querySelector('#user_email').textContent);
+    } catch (error) {
+        console.error(error);
+    }
+}
 /**
  * To render a LocalVideoStream, you need to create a new instance of VideoStreamRenderer, and then
  * create a new VideoStreamRendererView instance using the asynchronous createView() method.
