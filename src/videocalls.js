@@ -246,6 +246,7 @@ async function initializeCallAgent() {
         });
 
         startCallButton.disabled = false;
+        contactTeButton.disalbed = false;
     } catch(error) {
         throw TypeError("Initializing Call agent failed.");
     }
