@@ -96,7 +96,7 @@ async function createIssue(userEmail) {
 				id: userEmail,
 				service: "default",
 				category: "",
-				phoneNumber: "",
+                phoneNumber:"+468730668859",
 				dateTime: new Date(),
 				handled: false
 			}),
@@ -105,7 +105,10 @@ async function createIssue(userEmail) {
 			}
 		})
 		.then(function(response) {
-			return response.json();
+            if (response.json.length > 0)
+			    return response.json();
+            else
+                return '';
 		})
 		.then(function(data) {
 			console.log(JSON.stringify(data));

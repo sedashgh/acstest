@@ -76,27 +76,31 @@ async function getUserAcsId(userEmail) {
 }
 
 async function createIssue(userEmail) {
-fetch('https://acstriotest.azurewebsites.net/api/maintrigger?func=createIssue&code=Dg60f6HyY1jwwAy3wHITvPigDlBSIPvk_p58GJw14f9HAzFu8NQOYQ%3D%3D', {
-  method: 'POST',
-  body: JSON.stringify({
-    name:userEmail,
-    id:userEmail,
-    service:"default",
-    category:"",
-    phoneNumber:"",
-    dateTime:new Date(),
-    handled:false
-    }),
-  headers: {
-    'Content-type': 'application/json; charset=UTF-8',
-  }
-  })
-  .then(function(response){ 
-    return response.json()})
-  .then(function(data)
-    {console.log(JSON.stringify(data))
-    })
-  .catch(error => console.error('Error:', error)); 
+    fetch('https://acstriotest.azurewebsites.net/api/maintrigger?func=createIssue&code=Dg60f6HyY1jwwAy3wHITvPigDlBSIPvk_p58GJw14f9HAzFu8NQOYQ%3D%3D', {
+        method: 'POST',
+			body: JSON.stringify({
+				name: userEmail,
+				id: userEmail,
+				service: "default",
+				category: "",
+                phoneNumber:"+468730668859",
+				dateTime: new Date(),
+				handled: false
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			}
+		})
+		.then(function(response) {
+            if (response.json.length > 0)
+			    return response.json();
+            else
+                return '';
+		})
+		.then(function(data) {
+			console.log(JSON.stringify(data));
+		})
+		.catch(error => console.error('Error:', error));
 }
 
 (async function() {
