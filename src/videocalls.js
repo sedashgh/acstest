@@ -76,7 +76,7 @@ async function getUserAcsId(userEmail) {
 }
 
 async function createIssue(userEmail) {
-fetch('http://localhost:7071/api/MainTrigger?func=createIssue', {
+fetch('https://acstriotest.azurewebsites.net/api/maintrigger?func=createIssue&code=Dg60f6HyY1jwwAy3wHITvPigDlBSIPvk_p58GJw14f9HAzFu8NQOYQ%3D%3D', {
   method: 'POST',
   body: JSON.stringify({
     name:userEmail,
