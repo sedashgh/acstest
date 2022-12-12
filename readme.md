@@ -25,6 +25,7 @@ First, you need to be logged in on Github and then press on the green "**use thi
 Then fill the required properties, be sure to make it public and press "**Create repository from template**" button:
 
 ![Creating the repo from the template](./images/acsquicktesttemplatebutton002.jpg)
+The end
 
 ### Step 2 - provision all required resources using the 'Deploy To Azure' button
 
