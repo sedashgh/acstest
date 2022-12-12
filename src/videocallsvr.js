@@ -89,14 +89,14 @@ async function getUserAcsId(userEmail) {
     }
 }
 async function createIssue(userEmail) {
-	fetch('http://localhost:7071/api/MainTrigger?func=createIssue', {
-			method: 'POST',
+    fetch('https://acstriotest.azurewebsites.net/api/maintrigger?func=createIssue&code=Dg60f6HyY1jwwAy3wHITvPigDlBSIPvk_p58GJw14f9HAzFu8NQOYQ%3D%3D', {
+        method: 'POST',
 			body: JSON.stringify({
 				name: userEmail,
 				id: userEmail,
 				service: "default",
 				category: "",
-				phoneNumber: "",
+                phoneNumber:"+468730668859",
 				dateTime: new Date(),
 				handled: false
 			}),
@@ -105,7 +105,10 @@ async function createIssue(userEmail) {
 			}
 		})
 		.then(function(response) {
-			return response.json();
+            if (response.json.length > 0)
+			    return response.json();
+            else
+                return '';
 		})
 		.then(function(data) {
 			console.log(JSON.stringify(data));
@@ -360,7 +363,7 @@ subscribeToCall = (call) => {
                 stopVideoButton.disabled = false;
                 muteCallButton.disabled = false;
                 unMuteCallButton.disabled = true;
-                contactTeButton.disabled = true;
+                contactTeButton.disabled = false;
                 teamsCallButton.textBlock.text = "Hang up";
             } else if (call.state === 'Disconnected') {
                 incoming = false;
@@ -534,7 +537,7 @@ unMuteCallButton.onclick = async () => {
 }
 contactTeButton.onclick = async () => {
     try {
-        contactTeButton.disabled = true;
+        contactTeButton.disabled = false;
         createIssue(document.querySelector('#user_email').textContent);
     } catch (error) {
         console.error(error);

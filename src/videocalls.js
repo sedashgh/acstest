@@ -76,27 +76,31 @@ async function getUserAcsId(userEmail) {
 }
 
 async function createIssue(userEmail) {
-fetch('http://localhost:7071/api/MainTrigger?func=createIssue', {
-  method: 'POST',
-  body: JSON.stringify({
-    name:userEmail,
-    id:userEmail,
-    service:"default",
-    category:"",
-    phoneNumber:"",
-    dateTime:new Date(),
-    handled:false
-    }),
-  headers: {
-    'Content-type': 'application/json; charset=UTF-8',
-  }
-  })
-  .then(function(response){ 
-    return response.json()})
-  .then(function(data)
-    {console.log(JSON.stringify(data))
-    })
-  .catch(error => console.error('Error:', error)); 
+    fetch('https://acstriotest.azurewebsites.net/api/maintrigger?func=createIssue&code=Dg60f6HyY1jwwAy3wHITvPigDlBSIPvk_p58GJw14f9HAzFu8NQOYQ%3D%3D', {
+        method: 'POST',
+			body: JSON.stringify({
+				name: userEmail,
+				id: userEmail,
+				service: "default",
+				category: "",
+                phoneNumber:"+468730668859",
+				dateTime: new Date(),
+				handled: false
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			}
+		})
+		.then(function(response) {
+            if (response.json.length > 0)
+			    return response.json();
+            else
+                return '';
+		})
+		.then(function(data) {
+			console.log(JSON.stringify(data));
+		})
+		.catch(error => console.error('Error:', error));
 }
 
 (async function() {
@@ -246,6 +250,7 @@ async function initializeCallAgent() {
         });
 
         startCallButton.disabled = false;
+        contactTeButton.disalbed = false;
     } catch(error) {
         throw TypeError("Initializing Call agent failed.");
     }
@@ -274,6 +279,9 @@ startCallButton.onclick = async () => {
                 // join with meeting link
                 call = callAgent.join({meetingLink: meetingLink}, { videoOptions });
             }
+			else if (meetingLink.startsWith('8:acs:')) {
+                call = callAgent.startCall([{ meetingLink}], { videoOptions });  
+			}
             else {
                 // Converting email address to internal ACS User Id
                 let AcsUserId = await getUserAcsId(meetingLink);
@@ -337,7 +345,7 @@ subscribeToCall = (call) => {
                 stopVideoButton.disabled = false;
                 muteCallButton.disabled = false;
                 unMuteCallButton.disabled = true;
-                contactTeButton.disabled = true;
+                contactTeButton.disabled = false;
             } else if (call.state === 'Disconnected') {
                 startCallButton.disabled = false;
                 hangUpCallButton.disabled = true;
@@ -501,7 +509,7 @@ unMuteCallButton.onclick = async () => {
 }
 contactTeButton.onclick = async () => {
     try {
-        contactTeButton.disabled = true;
+        contactTeButton.disabled = false;
         createIssue(document.querySelector('#user_email').textContent);
     } catch (error) {
         console.error(error);
