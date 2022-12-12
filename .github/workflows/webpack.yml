@@ -1,28 +1,36 @@
-name: NodeJS with Webpack
+name: 'App Deploy'
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+    - main
+
   pull_request:
-    branches: [ "main" ]
+    types:
+    - opened
+    - synchronize
+    - reopened
+    - closed
+    branches:
+    - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  call_app_deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    uses: justinyoo/acsauth/.github/workflows/app-deploy.yaml@main
+    with:
+      job_name: 'Deploy Static Web App'
+      app_location: 'src'
+      api_location: 'api'
+      output_location: ''
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      aswa_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}'
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Build
-      run: |
-        npm install
-        npx webpack
+  call_pr_close:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    uses: justinyoo/acsauth/.github/workflows/pr-close.yaml@main
+    with:
+      job_name: 'Close Pull Request'
+    secrets:
+      aswa_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}'
